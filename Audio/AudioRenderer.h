@@ -41,8 +41,9 @@ OSStatus processBlock(void *inRefCon,
                       AudioBufferList *ioData)
 {
     auto *renderer = (MyRenderer*) inRefCon;
+    //prepare oscillator(renderer, 400.0f)
 
-    generateTestTone(renderer, ioData, inNumberFrames, 400.0f);
+    renderVoice(renderer, ioData, inNumberFrames);
 
 
     //etc

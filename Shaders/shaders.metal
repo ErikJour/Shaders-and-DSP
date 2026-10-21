@@ -25,9 +25,10 @@ vertexMain(uint vertexID [[ vertex_id ]],
     return out;
 }
 
-float plot (float2 st, float pct)
+float plot (float2 st, float pct, float data)
 {
-    return smoothstep(pct - 0.02, pct, st.y) - smoothstep(pct, pct + 0.02, st.y) ;
+    data = (data * 0.01) + 0.01;
+    return smoothstep(pct - data, pct, st.y) - smoothstep(pct, pct + data, st.y) ;
 }
 
 fragment float4 fragmentMain(
@@ -35,10 +36,11 @@ fragment float4 fragmentMain(
         constant Uniforms &uniforms [[buffer(11)]])
         {
 
+        float data = uniforms.audioData;
         float2 st    = in.uv;
         float y = smoothstep(0.2, 0.5, st.x) - smoothstep(0.5, 0.8, st.x);
         float3 color = float3(y);
-        float pct = plot(st, y);
+        float pct = plot(st, y, data);
 
         color = (1.0 - pct) * color + pct * float3(0.0, 1.0, 0.0);
         return float4(color, 1.0);
