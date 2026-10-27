@@ -27,7 +27,9 @@ static double getStreamSampleRate(AudioUnit unit, AudioUnitScope scope)
 
 void prepareToPlay(MyRenderer* renderer)
 {
-    renderer->osc.prepareOscillator(renderer->sampleRate, 400.0);
+    double sR = renderer->sampleRate;
+    renderer->osc.prepareOscillator(sR, 200.0);
+    renderer->lfo.prepareOscillator(sR, 0.1);
 }
 
 OSStatus processBlock(void *inRefCon,
@@ -38,7 +40,8 @@ OSStatus processBlock(void *inRefCon,
                       AudioBufferList *ioData)
 {
     auto *renderer = (MyRenderer*) inRefCon;
-
+    double sR = renderer->sampleRate;
+    renderer->osc.prepareOscillator(sR, 200.0 * renderer->lfo.nextValue());
     renderVoice(renderer, ioData, inNumberFrames);
 
     return noErr;

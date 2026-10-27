@@ -37,13 +37,12 @@ inline void renderVoice(MyRenderer *renderer, AudioBufferList *ioData, UInt32 in
 
     for (int frame = 0; frame < inNumberFrames; ++frame) {
 
-
         float oscSample       = renderer->osc.nextValue();
         float noiseSample     = renderer->noise.nextValue();
-        float sample          = (oscSample + noiseSample) * applyGain(0.5f);
+        float sample          = (oscSample) * applyGain(0.25f * renderer->lfo.nextValue());
 
         (leftChannel)[frame]  = (rightChannel)[frame] = sample;
-        setOutputData(renderer, *leftChannel);
+        setOutputData(renderer, renderer->lfo.nextValue());
         renderer->currentSample++;
     }
 

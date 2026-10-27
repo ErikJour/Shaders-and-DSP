@@ -20,6 +20,7 @@ struct MyRenderer
     UInt32              currentSample{};
     Oscillator          osc{};
     NoiseGenerator      noise{};
+    Oscillator          lfo{};
 
     void prepareToPlay(double newSampleRate, UInt32 maxFrames)
     {
