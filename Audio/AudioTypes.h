@@ -7,6 +7,8 @@
 #include <AudioToolbox/AudioToolbox.h>
 #include <atomic>
 #import "DSP/AnimatedFFT.h"
+#include "DSP/AnimatedOscillator.h"
+#include "DSP/AnimatedNoise.h"
 
 struct MyRenderer
 {
@@ -16,6 +18,8 @@ struct MyRenderer
     double              sampleRate {};
     AnimatedFFT         fft[2];
     UInt32              currentSample{};
+    Oscillator          osc{};
+    NoiseGenerator      noise{};
 
     void prepareToPlay(double newSampleRate, UInt32 maxFrames)
     {

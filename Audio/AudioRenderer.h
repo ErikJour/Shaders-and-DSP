@@ -5,15 +5,11 @@
 #pragma once
 #include "AudioToolBox/AudioToolBox.h"
 #include "AudioUtilities.h"
-#include "DSP/TestToneGenerator.h"
+#include "DSP/AnimatedVoice.h"
 #include "AudioTypes.h"
 #include "DSP/AnimatedFilter.h"
 #include "DSP/AnimatedFFT.h"
 #include <CoreAudio/CoreAudio.h>
-
-static bool audioOn     = false;
-static float gainAmount = 0.75f;
-AnimatedFilter filter;
 
 static double getStreamSampleRate(AudioUnit unit, AudioUnitScope scope)
 {
@@ -29,10 +25,11 @@ static double getStreamSampleRate(AudioUnit unit, AudioUnitScope scope)
     return asbd.mSampleRate;
 }
 
+void prepareToPlay(MyRenderer* renderer)
+{
+    renderer->osc.prepareOscillator(renderer->sampleRate, 400.0);
+}
 
-//============================================
-//Render callback for sine wave
-//============================================
 OSStatus processBlock(void *inRefCon,
                       AudioUnitRenderActionFlags *ioActionFlags,
                       const AudioTimeStamp *inTimeStamp,
@@ -41,14 +38,10 @@ OSStatus processBlock(void *inRefCon,
                       AudioBufferList *ioData)
 {
     auto *renderer = (MyRenderer*) inRefCon;
-    //prepare oscillator(renderer, 400.0f)
 
     renderVoice(renderer, ioData, inNumberFrames);
 
-
-    //etc
-
-        return noErr;
+    return noErr;
 }
 
 //============================================
@@ -57,14 +50,14 @@ OSStatus processBlock(void *inRefCon,
 void CreateAndConnectOutputUnit(MyRenderer *renderer)
 {
     //============================================
-    //First, define the output component
+    //Define the output component
     //============================================
     AudioComponentDescription outputCd = {};
     outputCd.componentType             = kAudioUnitType_Output;
     outputCd.componentSubType          = kAudioUnitSubType_DefaultOutput;
     outputCd.componentManufacturer     = kAudioUnitManufacturer_Apple;
     //============================================
-    //Second, find the audio unit output component
+    //Find the audio unit output component
     //============================================
     AudioComponent comp = AudioComponentFindNext(NULL, &outputCd);
     if (comp == nullptr) {
@@ -75,7 +68,7 @@ void CreateAndConnectOutputUnit(MyRenderer *renderer)
     checkError(AudioComponentInstanceNew(comp, &renderer->outputUnit),
                "Could not open component for output unit");
     //============================================
-    //Third, register the render callback
+    //Register the render callback
     //============================================
     AURenderCallbackStruct input;
     input.inputProc       = processBlock;
@@ -99,7 +92,7 @@ void CreateAndConnectOutputUnit(MyRenderer *renderer)
                                     kAudioUnitScope_Input, 0, &fmt, &size),
                "Couldn't get input format");
 
-    fmt.mSampleRate = hwRate;   // keep channels / Float32 / non-interleaved as-is
+    fmt.mSampleRate = hwRate;
     checkError(AudioUnitSetProperty(renderer->outputUnit,
                                     kAudioUnitProperty_StreamFormat,
                                     kAudioUnitScope_Input, 0, &fmt, sizeof(fmt)),
@@ -121,7 +114,7 @@ void CreateAndConnectOutputUnit(MyRenderer *renderer)
                                         kAudioObjectPropertyScopeGlobal,
                                         kAudioObjectPropertyElementMain };
 
-    UInt32 frames = 256;  // request; optional
+    UInt32 frames = 256;
     AudioObjectSetPropertyData(dev, &addr, 0, nullptr, sizeof(frames), &frames);
 
     sz = sizeof(frames);
@@ -129,24 +122,30 @@ void CreateAndConnectOutputUnit(MyRenderer *renderer)
     printf("Buffer size: %u frames\n", frames);
 }
 
+
 //==========================================
 //Render function to place in main
 //==========================================
 void renderAudio(MyRenderer* renderer)
 {
-    renderer->outputUnit = nullptr;
+    renderer->outputUnit         = nullptr;
     renderer->startingFrameCount = 0.0;
     renderer->outputData.store(0.0f, std::memory_order_relaxed);
     //============================
     //Callback function
     //============================
-    CreateAndConnectOutputUnit(renderer); //Callback function, good here
+    CreateAndConnectOutputUnit(renderer);
+    //===========================
+    //Prepare to Play
+    //===========================
+    prepareToPlay(renderer);
     //============================
     //Start playback
     //============================
     checkError(AudioOutputUnitStart(renderer->outputUnit),
                "Could not start output unit");
 }
+
 
 void stopAudio(MyRenderer* renderer)
 {

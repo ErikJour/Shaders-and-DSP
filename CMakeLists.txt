@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 4.0)
 
-project(HomemadeLPG
+project(DspAndShadersOnMac
         LANGUAGES
         C
         CXX
@@ -11,7 +11,7 @@ project(HomemadeLPG
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(HomemadeLPG MACOSX_BUNDLE
+add_executable(DspAndShadersOnMac MACOSX_BUNDLE
         main.mm
         UI/mainWindow.h
         UI/GraphicsEngine.h
@@ -19,7 +19,7 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
         Geometries/TriangleGeo.h
         Audio/AudioUtilities.h
         Audio/AudioRenderer.h
-        Audio/DSP/TestToneGenerator.h
+        Audio/DSP/AnimatedVoice.h
         Audio/AudioTypes.h
         UI/Common.h
         Audio/DSP/AnimatedGain.h
@@ -30,16 +30,16 @@ add_executable(HomemadeLPG MACOSX_BUNDLE
 #======================================================
 #Automatically manage memory
 #======================================================
-target_compile_options(HomemadeLPG PRIVATE
+target_compile_options(DspAndShadersOnMac PRIVATE
         -fobjc-arc)
 #======================================================
 #Plist for metadata settings
 #======================================================
-set_target_properties(HomemadeLPG PROPERTIES
+set_target_properties(DspAndShadersOnMac PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST
         ${CMAKE_CURRENT_SOURCE_DIR}/info.plist)
 
-target_link_libraries(HomemadeLPG
+target_link_libraries(DspAndShadersOnMac
         PRIVATE
         "-framework AppKit"
         "-framework Metal"
@@ -83,7 +83,7 @@ add_custom_command(
         COMMENT "Compiling Metal shaders"
 )
 
-target_sources(HomemadeLPG PRIVATE
+target_sources(DspAndShadersOnMac PRIVATE
         ${METALLIB}
 )
 
