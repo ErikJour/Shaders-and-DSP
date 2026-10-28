@@ -26,9 +26,8 @@ out.uv       = pixelSpacePosition / 512;
 return out;
 }
 
-float plot (float2 st, float pct, float data)
+float plot (float2 st, float pct)
 {
-    data = (data * 0.01) + 0.01;
     return smoothstep(pct - 0.01, pct, st.y) - smoothstep(pct, pct + 0.01, st.y) ;
 }
 
@@ -38,12 +37,23 @@ fragment float4 fragmentMain(
         RasterizerData in [[stage_in]],
 constant Uniforms &uniforms [[buffer(11)]])
 {
+    float data = uniforms.audioData;
 
-float3 colorA = float3(0.149, 0.141, 0.912);
-float3 colorB = float3(1.000, 0.833, 0.224);
+    float3 colorA = float3(0.149,0.141,0.912);
+    float3 colorB = float3(1.000,0.833,0.224);
 
-float3 color = float3(0.0);
-float pct = abs(sin(uniforms.audioData));
-color = mix(colorA, colorB, pct);
-return float4(color, 1.0);
+    float2 st = in.uv;
+    float3 color = float3(0.0);
+    float3 pct = float3(st.x);
+
+//    pct.r = smoothstep(0.0,1.0, st.x);
+//    pct.g = sin(st.x*PI);
+//    pct.b = pow(st.x,0.5);
+    color = mix(colorA, colorB, pct);
+    // Plot transition lines for each channel
+    color = mix(color,float3(1.0,0.0,0.0),plot(st,pct.r));
+    color = mix(color,float3(0.0,1.0,0.0),plot(st,pct.g));
+    color = mix(color,float3(0.0,0.0,1.0),plot(st,pct.b));
+
+    return float4(color, 1.0);
 }
