@@ -15,7 +15,7 @@
 //======================================================================================
 inline void setOutputData(MyRenderer *renderer, float sampleValue)
 {
-    renderer->outputData = sampleValue;
+    renderer->outputData = renderer->delay.currentValue;
 }
 
 inline void updateOutData(MyRenderer *renderer)

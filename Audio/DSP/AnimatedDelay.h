@@ -17,6 +17,7 @@ struct AnimatedDelay {
     int                      mDelayInSamples    = 0;
     int                      mWritePosition     = 0;
     int                      mReadPosition      = 0;
+    float                    currentValue       = 0.0f;
 
     void init (const double sampleRate)
     {
@@ -49,6 +50,7 @@ struct AnimatedDelay {
         if (mWritePosition >= mDelayBufferLength) { mWritePosition = 0; }
         mReadPosition++;
         if (mReadPosition >= mDelayBufferLength) { mReadPosition = 0; }
+        currentValue = outputSample;
         return outputSample;
     }
 
