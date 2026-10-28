@@ -46,9 +46,9 @@ constant Uniforms &uniforms [[buffer(11)]])
     float3 color = float3(0.0);
     float3 pct = float3(st.x);
 
-//    pct.r = smoothstep(0.0,1.0, st.x);
-//    pct.g = sin(st.x*PI);
-//    pct.b = pow(st.x,0.5);
+    pct.r = smoothstep(0.0,1.0, st.x * data);
+    pct.g = sin(st.x*PI * data);
+    pct.b = pow(st.x,0.5);
     color = mix(colorA, colorB, pct);
     // Plot transition lines for each channel
     color = mix(color,float3(1.0,0.0,0.0),plot(st,pct.r));

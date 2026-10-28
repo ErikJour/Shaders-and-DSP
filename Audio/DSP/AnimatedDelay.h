@@ -50,7 +50,9 @@ struct AnimatedDelay {
         if (mWritePosition >= mDelayBufferLength) { mWritePosition = 0; }
         mReadPosition++;
         if (mReadPosition >= mDelayBufferLength) { mReadPosition = 0; }
-        currentValue = outputSample;
+        if (mReadPosition <= 22100 && mReadPosition >= 0) {
+            currentValue = outputSample;
+        }
         return outputSample;
     }
 
