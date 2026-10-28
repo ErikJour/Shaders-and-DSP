@@ -27,7 +27,10 @@ static double getStreamSampleRate(AudioUnit unit, AudioUnitScope scope)
 
 void prepareToPlay(MyRenderer* renderer)
 {
-    renderer->osc.prepareOscillator(renderer->sampleRate, 400.0);
+    double sampleRate = renderer->sampleRate;
+    renderer->osc.prepareOscillator(sampleRate, 400.0);
+    renderer->delay.init(sampleRate);
+    renderer->delay.setDelay(40000);
 }
 
 OSStatus processBlock(void *inRefCon,

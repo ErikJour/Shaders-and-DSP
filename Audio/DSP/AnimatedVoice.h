@@ -10,6 +10,7 @@
 #include <stdatomic.h>
 #include <cmath>
 #include "AnimatedGain.h"
+#include "AnimatedDelay.h"
 
 //======================================================================================
 inline void setOutputData(MyRenderer *renderer, float sampleValue)
@@ -41,8 +42,9 @@ inline void renderVoice(MyRenderer *renderer, AudioBufferList *ioData, UInt32 in
         float oscSample       = renderer->osc.nextValue();
         float noiseSample     = renderer->noise.nextValue();
         float sample          = (oscSample + noiseSample) * applyGain(0.5f);
+        float delayedSample   = renderer->delay.processSample(sample);
 
-        (leftChannel)[frame]  = (rightChannel)[frame] = sample;
+        (leftChannel)[frame]  = (rightChannel)[frame] = sample + delayedSample;
         setOutputData(renderer, *leftChannel);
         renderer->currentSample++;
     }

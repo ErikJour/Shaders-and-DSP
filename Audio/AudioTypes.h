@@ -9,6 +9,7 @@
 #import "DSP/AnimatedFFT.h"
 #include "DSP/AnimatedOscillator.h"
 #include "DSP/AnimatedNoise.h"
+#include "DSP/AnimatedDelay.h"
 
 struct MyRenderer
 {
@@ -20,6 +21,7 @@ struct MyRenderer
     UInt32              currentSample{};
     Oscillator          osc{};
     NoiseGenerator      noise{};
+    AnimatedDelay       delay{};
 
     void prepareToPlay(double newSampleRate, UInt32 maxFrames)
     {
