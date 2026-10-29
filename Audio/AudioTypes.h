@@ -10,6 +10,7 @@
 #include "DSP/AnimatedOscillator.h"
 #include "DSP/AnimatedNoise.h"
 #include "DSP/AnimatedDelay.h"
+#include "DSP/AnimatedEnvelope.h"
 
 struct MyRenderer
 {
@@ -22,6 +23,8 @@ struct MyRenderer
     Oscillator          osc{};
     NoiseGenerator      noise{};
     AnimatedDelay       delay{};
+    AnimatedEnvelope    env{};
+
 
     void prepareToPlay(double newSampleRate, UInt32 maxFrames)
     {

@@ -25,7 +25,7 @@ inline void updateOutData(MyRenderer *renderer)
     renderer->outputData.store(current, std::memory_order_relaxed);
 }
 //======================================================================================
-
+float gainFactor   = 0.9f;
 
 //======================================================================================
 inline void renderVoice(MyRenderer *renderer, AudioBufferList *ioData, UInt32 inNumberFrames) {
@@ -34,20 +34,25 @@ inline void renderVoice(MyRenderer *renderer, AudioBufferList *ioData, UInt32 in
     auto *leftChannel  = (Float32 *) ioData->mBuffers[0].mData;
     auto *rightChannel = (Float32 *) ioData->mBuffers[1].mData;
 
+    float silence = 0.0f;
+
+    //if note on
 
 
     for (int frame = 0; frame < inNumberFrames; ++frame) {
 
-
         float oscSample       = renderer->osc.nextValue();
-        float noiseSample     = renderer->noise.nextValue();
+        float noiseSample     = renderer->noise.nextValue() * silence;
         float sample          = (oscSample + noiseSample) * applyGain(0.5f);
         float delayedSample   = renderer->delay.processSample(sample);
+        float release         = renderer->env.nextValue();
 
-        (leftChannel)[frame]  = (rightChannel)[frame] = sample + delayedSample;
+        (leftChannel)[frame]  = (rightChannel)[frame] = (sample + delayedSample) * release;
         setOutputData(renderer, *leftChannel);
         renderer->currentSample++;
     }
+
+    //else reset delay and oscillator
 
     updateOutData(renderer);
 

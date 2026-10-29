@@ -30,7 +30,9 @@ void prepareToPlay(MyRenderer* renderer)
     double sampleRate = renderer->sampleRate;
     renderer->osc.prepareOscillator(sampleRate, 400.0);
     renderer->delay.init(sampleRate);
-    renderer->delay.setDelay(40000);
+    renderer->delay.setDelay(1000);
+    renderer->env.level = 1.0f;
+
 }
 
 OSStatus processBlock(void *inRefCon,
