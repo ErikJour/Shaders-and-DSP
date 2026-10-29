@@ -22,9 +22,10 @@ add_executable(DspAndShadersOnMac MACOSX_BUNDLE
         Audio/DSP/AnimatedVoice.h
         Audio/AudioTypes.h
         UI/Common.h
-        Audio/DSP/AnimatedGain.h
-        Audio/DSP/AnimatedFilter.h
-        Audio/DSP/AnimatedFFT.h
+        Audio/DSP/effects/AnimatedGain.h
+        Audio/DSP/filters/AnimatedFilter.h
+        Audio/DSP/data/AnimatedFFT.h
+        Shaders/shaders.metal
 )
 
 #======================================================
@@ -57,6 +58,7 @@ target_link_libraries(DspAndShadersOnMac
 #=========================================================
 #Metal
 #=========================================================
+
 set(METAL_AIR
         ${CMAKE_CURRENT_BINARY_DIR}/shaders.air
 )

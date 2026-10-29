@@ -1,5 +1,6 @@
 // shaders.metal
 #include <metal_stdlib>
+#include <metal_logging>
 #include "../UI/Common.h"
 
 using namespace metal;
