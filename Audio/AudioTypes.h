@@ -6,17 +6,19 @@
 
 #include <AudioToolbox/AudioToolbox.h>
 #include <atomic>
-#import "DSP/AnimatedFFT.h"
-#include "DSP/AnimatedOscillator.h"
-#include "DSP/AnimatedNoise.h"
-#include "DSP/AnimatedDelay.h"
-#include "DSP/AnimatedEnvelope.h"
+#import  "DSP/data/AnimatedFFT.h"
+#include "DSP/generators/AnimatedOscillator.h"
+#include "DSP/generators/AnimatedNoise.h"
+#include "DSP/effects/AnimatedDelay.h"
+#include "DSP/shapers/AnimatedEnvelope.h"
+#include "DSP/data/AudioData.h"
+#include "DSP/effects/AnimatedGain.h"
+
 
 struct MyRenderer
 {
     AudioUnit           outputUnit{nullptr};
     double              startingFrameCount{0.0};
-    std::atomic<float>  outputData{0.0f};
     double              sampleRate {};
     AnimatedFFT         fft[2];
     UInt32              currentSample{};
@@ -24,7 +26,8 @@ struct MyRenderer
     NoiseGenerator      noise{};
     AnimatedDelay       delay{};
     AnimatedEnvelope    env{};
-
+    AudioData           data{};
+    AnimatedGain        gain{};
 
     void prepareToPlay(double newSampleRate, UInt32 maxFrames)
     {

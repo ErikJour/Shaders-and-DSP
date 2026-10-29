@@ -9,22 +9,8 @@
 #include <iostream>
 #include <stdatomic.h>
 #include <cmath>
-#include "AnimatedGain.h"
-#include "AnimatedDelay.h"
 
-//======================================================================================
-inline void setOutputData(MyRenderer *renderer, float sampleValue)
-{
-    renderer->outputData = renderer->delay.currentValue;
-}
 
-inline void updateOutData(MyRenderer *renderer)
-{
-    float current = renderer->outputData.load(std::memory_order_relaxed);
-
-    renderer->outputData.store(current, std::memory_order_relaxed);
-}
-//======================================================================================
 float gainFactor   = 0.9f;
 
 //======================================================================================
@@ -43,17 +29,17 @@ inline void renderVoice(MyRenderer *renderer, AudioBufferList *ioData, UInt32 in
 
         float oscSample       = renderer->osc.nextValue();
         float noiseSample     = renderer->noise.nextValue() * silence;
-        float sample          = (oscSample + noiseSample) * applyGain(0.5f);
+        float sample          = (oscSample + noiseSample) * renderer->gain.applyGain(0.5f);
         float delayedSample   = renderer->delay.processSample(sample);
         float release         = renderer->env.nextValue();
 
         (leftChannel)[frame]  = (rightChannel)[frame] = (sample + delayedSample) * release;
-        setOutputData(renderer, *leftChannel);
+        renderer->data.setOutputData(release);
         renderer->currentSample++;
     }
 
     //else reset delay and oscillator
 
-    updateOutData(renderer);
+    renderer->data.updateOutData();
 
 }

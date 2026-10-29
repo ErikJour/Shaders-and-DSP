@@ -4,8 +4,8 @@
 
 #pragma once
 #include "AudioToolBox/AudioToolBox.h"
-#include "../AudioUtilities.h"
-#include "../AudioTypes.h"
+#include "../../AudioUtilities.h"
+#include "../../AudioTypes.h"
 
 //======================================================================================
 

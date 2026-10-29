@@ -7,8 +7,6 @@
 #include "AudioUtilities.h"
 #include "DSP/AnimatedVoice.h"
 #include "AudioTypes.h"
-#include "DSP/AnimatedFilter.h"
-#include "DSP/AnimatedFFT.h"
 #include <CoreAudio/CoreAudio.h>
 
 static double getStreamSampleRate(AudioUnit unit, AudioUnitScope scope)
@@ -135,7 +133,7 @@ void renderAudio(MyRenderer* renderer)
 {
     renderer->outputUnit         = nullptr;
     renderer->startingFrameCount = 0.0;
-    renderer->outputData.store(0.0f, std::memory_order_relaxed);
+    renderer->data.outputData.store(0.0f, std::memory_order_relaxed);
     //============================
     //Callback function
     //============================
@@ -160,7 +158,4 @@ void stopAudio(MyRenderer* renderer)
     AudioComponentInstanceDispose(renderer->outputUnit);
 }
 
-void getData(MyRenderer* renderer)
-{
-    std::cout << &renderer->outputData << std::endl;
-}
+

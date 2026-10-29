@@ -94,7 +94,7 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
         // ==============================================
         // PASS UNIFORMS TO FRAGMENT SHADER AT INDEX 11
         // ==============================================
-        _uniforms.audioData     = _audioRenderer->outputData;
+        _uniforms.audioData     = _audioRenderer->data.outputData;
 
         [RenderEncoder setFragmentBytes:&_uniforms
                                  length:sizeof(Uniforms)
