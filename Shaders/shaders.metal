@@ -12,19 +12,18 @@ typedef struct {
     float2 uv;
 } RasterizerData;
 
-vertex RasterizerData
-
-vertexMain(uint vertexID [[ vertex_id ]],
-constant game_vertex *vertexArray [[ buffer(0) ]])
+vertex RasterizerData vertexMain(uint vertexID [[ vertex_id ]],
+                                constant game_vertex *vertexArray [[ buffer(0) ]])
 {
-RasterizerData out;
-float2 pixelSpacePosition = vertexArray[vertexID].position.xy;
-float2 normalizedPosition = (pixelSpacePosition / (512.0 / 2.0)) - 1.0;
+    RasterizerData out;
+    float2 pixelSpacePosition = vertexArray[vertexID].position.xy;
+    float2 normalizedPosition = (pixelSpacePosition / (512.0 / 2.0)) - 1.0;
 
-out.position = float4(normalizedPosition.x, normalizedPosition.y, 0.0, 1.0);
-out.color    = vertexArray[vertexID].color;
-out.uv       = pixelSpacePosition / 512;
-return out;
+    out.position = float4(normalizedPosition.x, normalizedPosition.y, 0.0, 1.0);
+    out.color    = vertexArray[vertexID].color;
+    out.uv       = pixelSpacePosition / 512;
+
+    return out;
 }
 
 float plot (float2 st, float pct)
@@ -33,28 +32,26 @@ float plot (float2 st, float pct)
 }
 
 
-
-fragment float4 fragmentMain(
-        RasterizerData in [[stage_in]],
-constant Uniforms &uniforms [[buffer(11)]])
+fragment float4 fragmentMain(RasterizerData in [[stage_in]],
+                                constant Uniforms &uniforms [[buffer(11)]])
 {
-    float data = uniforms.audioData;
-
+    float data    = uniforms.audioData;
     float3 colorA = float3(0.149,0.141,0.912);
     float3 colorB = float3(1.000,0.833,0.224);
-
-    float2 st = in.uv;
-    float3 color = float3(0.0);
-    float3 pct = float3(st.x);
+    float2 st     = in.uv;
+    float3 color  = float3(0.0);
+    float3 pct    = float3(st.x);
 
     pct.r = smoothstep(0.0,1.0, st.x * data);
     pct.g = sin(st.x*PI * data);
-    pct.b = pow(st.x,0.5);
+    pct.b = pow(st.x, 0.5);
     color = mix(colorA, colorB, pct);
+    //====================================================
     // Plot transition lines for each channel
-    color = mix(color,float3(1.0,0.0,0.0),plot(st,pct.r));
-    color = mix(color,float3(0.0,1.0,0.0),plot(st,pct.g));
-    color = mix(color,float3(0.0,0.0,1.0),plot(st,pct.b));
+    //====================================================
+    //color = mix(color,float3(1.0,0.0,0.0),plot(st,pct.r));
+    //color = mix(color,float3(0.0,1.0,0.0),plot(st,pct.g));
+    //color = mix(color,float3(0.0,0.0,1.0),plot(st,pct.b));
 
     return float4(color, 1.0);
 }
