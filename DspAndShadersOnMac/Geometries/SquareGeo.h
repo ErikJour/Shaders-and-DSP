@@ -8,11 +8,11 @@
 #include "../UI/Common.h"
 #include "../UI/GraphicsEngine.h"
 
-void drawSquare (game_vertex *vertices, uint32_t *vertexCount, uint32_t side, vector_float4 color, uint32_t offsetX, uint32_t offsetY)
+void drawSquare (game_vertex *vertices, uint32_t *vertexCount, float side, vector_float4 color, float offsetX, float offsetY)
 {
     float screenWidth = 512.;
-    float centerX     = 512/2 + offsetX;
-    float centerY     = 512/2 + offsetY;
+    float centerX     = 512/2.0f + offsetX;
+    float centerY     = 512/2.0f + offsetY;
     float minX        = centerX - side;
     float maxX        = centerX + side;
     float minY        = centerY - side;

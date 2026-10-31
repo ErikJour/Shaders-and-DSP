@@ -39,7 +39,7 @@ Colors color;
     //============================================================================
     NSError *error = nil;
     NSString *libPath = [NSBundle.mainBundle.resourcePath
-            stringByAppendingPathComponent:@"shaders.metallib"];
+            stringByAppendingPathComponent:@"default.metallib"];
     id<MTLLibrary> lib = [device newLibraryWithURL:[NSURL fileURLWithPath:libPath] error:&error];
     if (!lib) { NSLog(@"Failed to load metallib at path %@: %@", libPath, error); return nil; }
 

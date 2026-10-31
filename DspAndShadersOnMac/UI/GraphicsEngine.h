@@ -38,13 +38,9 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
     _currentFrameIndex      = 0;
 }
 
--(void)mtkView:(MTKView *) view drawableSizeWillChange:(CGSize) size
-{
-}
+-(void)mtkView:(MTKView *) view drawableSizeWillChange:(CGSize) size  {}
 
-- (void)setXOffset:(float)amount
-{
-}
+- (void)setXOffset:(float)amount {}
 
 - (void)drawInMTKView:(MTKView *) view
 {
@@ -57,17 +53,27 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
 
     game_vertex *vertices = self.gameRenderCommands.vertexBuffer[frameIndex]->vertices;
 
-    vector_float4 blue    = { 0.0f, 0.0f, 1.0f, 1.0f };
-    vector_float4 red     = { 1.0f, 0.0f, 0.0f, 1.0f };
-    vector_float4 green   = { 0.0f, 1.0f, 0.0f, 1.0f };
+    vector_float4 blue      = { 0.0f, 0.0f, 1.0f, 1.0f };
+    vector_float4 red       = { 1.0f, 0.0f, 0.0f, 1.0f };
+    vector_float4 green     = { 0.0f, 1.0f, 0.0f, 1.0f };
+    vector_float4 magenta   = { 1.0f, 0.0f, 1.0f, 1.0f };
 
-    drawSquare(vertices,
-               &vertexCount,
-               512,
-               blue,
-               0,
-               0);
-
+    //Bottom left
+    uint32_t squareAStart = vertexCount;
+    drawSquare(vertices, &vertexCount, 128, blue, -128, -128);
+    uint32_t squareACount = vertexCount - squareAStart;
+    //Bottom right
+    uint32_t squareBStart = vertexCount;
+    drawSquare(vertices, &vertexCount, 128, red,   128,  -128);
+    uint32_t squareBCount = vertexCount - squareBStart;
+    //Top left
+    uint32_t squareCStart = vertexCount;
+    drawSquare(vertices, &vertexCount, 128, green,   -128,  128);
+    uint32_t squareCCount = vertexCount - squareCStart;
+    //Top right
+    uint32_t squareDStart = vertexCount;
+    drawSquare(vertices, &vertexCount, 128, magenta,   128,  128);
+    uint32_t squareDCount = vertexCount - squareDStart;
 
 
     @autoreleasepool{
@@ -95,16 +101,40 @@ MTKViewDelegate: NSObject <MTKViewDelegate>
         // PASS UNIFORMS TO FRAGMENT SHADER AT INDEX 11
         // ==============================================
         _uniforms.audioData     = _audioRenderer->data.outputData;
+        _uniforms.viewportSize = (vector_float2){ 512.0f, 512.0f };
 
-        [RenderEncoder setFragmentBytes:&_uniforms
-                                 length:sizeof(Uniforms)
-                                atIndex:11];
-        [RenderEncoder setViewport: viewPort];
+        //Bottom Left Square
+        _uniforms.materialId = MAT_BOTTOM_LEFT;
+        [RenderEncoder setVertexBytes:&_uniforms   length:sizeof(Uniforms) atIndex:11];
+        [RenderEncoder setFragmentBytes:&_uniforms length:sizeof(Uniforms) atIndex:11];
+        [RenderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                          vertexStart:squareAStart
+                          vertexCount:squareACount];
 
+        //Bottom right square
+        _uniforms.materialId = MAT_BOTTOM_RIGHT;
+        [RenderEncoder setVertexBytes:&_uniforms   length:sizeof(Uniforms) atIndex:11];
+        [RenderEncoder setFragmentBytes:&_uniforms length:sizeof(Uniforms) atIndex:11];
+        [RenderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                          vertexStart:squareBStart
+                          vertexCount:squareBCount];
 
-        [RenderEncoder drawPrimitives: MTLPrimitiveTypeTriangle
-                          vertexStart: 0
-                          vertexCount: vertexCount];
+        //Top left
+        _uniforms.materialId = MAT_TOP_LEFT;
+        [RenderEncoder setVertexBytes:&_uniforms   length:sizeof(Uniforms) atIndex:11];
+        [RenderEncoder setFragmentBytes:&_uniforms length:sizeof(Uniforms) atIndex:11];
+        [RenderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                          vertexStart:squareCStart
+                          vertexCount:squareCCount];
+//        //Top right
+        _uniforms.materialId = MAT_TOP_RIGHT;
+        [RenderEncoder setVertexBytes:&_uniforms   length:sizeof(Uniforms) atIndex:11];
+        [RenderEncoder setFragmentBytes:&_uniforms length:sizeof(Uniforms) atIndex:11];
+        [RenderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                          vertexStart:squareDStart
+                          vertexCount:squareDCount];
+
+        //==================================================================================
 
 
         [RenderEncoder endEncoding];

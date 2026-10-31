@@ -10,15 +10,24 @@
 typedef struct {
     float         audioData;
     vector_float2 viewportSize;
-    float         peakX;         // 0..1 on the log axis, < 0 = hidden
+    float         peakX;
+    uint32_t      materialId;
 } Uniforms;
+
+typedef enum :uint32_t {
+
+    MAT_BOTTOM_LEFT  = 0,
+    MAT_BOTTOM_RIGHT = 1,
+    MAT_TOP_LEFT     = 2,
+    MAT_TOP_RIGHT    = 3,
+    MAT_COUNT
+} MaterialId;
 
 struct game_vertex {
     vector_float4 position;
     vector_float4 color;
 };
 
-// Colors struct using vector_float4
 struct Colors {
     vector_float4 blue  = { 0.0f, 0.0f, 1.0f, 1.0f };
     vector_float4 red   = { 1.0f, 0.0f, 0.0f, 1.0f };

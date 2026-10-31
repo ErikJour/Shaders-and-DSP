@@ -1,9 +1,13 @@
+//
+//  main.mm
+//  DspAndShadersOnMac
+//
+//  Created by Erik Jourgensen on 10/31/26.
+//
+
 #import <AppKit/AppKit.h>
 #import "UI/mainWindow.h"
 
-//===========================================================
-//Main Loop
-//===========================================================
 static BtWindowDel *btWindowDelegate = nil;
 
 int main(int argc, const char *argv[])
